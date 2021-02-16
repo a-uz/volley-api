@@ -1,0 +1,78 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Gender {
+  id     Int      @id @default(autoincrement())
+  name   String
+  Player Player[]
+}
+
+model Player {
+  id        Int         @id @default(autoincrement())
+  firstName String
+  lastName  String
+  age       Int
+  number    Int
+  gender    Gender      @relation(fields: [genderId], references: [id])
+  genderId  Int
+  team      Team        @relation(fields: [teamId], references: [id])
+  teamId    Int
+  GameEvent GameEvent[]
+}
+
+model Team {
+  id        Int         @id @default(autoincrement())
+  name      String
+  players   Player[]
+  Game      Game[]
+  GameEvent GameEvent[]
+}
+
+model GameStatus {
+  id   Int    @id @default(autoincrement())
+  name String
+  Game Game[]
+}
+
+model GameCategory {
+  id   Int    @id @default(autoincrement())
+  name String
+  Game Game[]
+}
+
+model GameEventType {
+  id        Int         @id @default(autoincrement())
+  name      String
+  GameEvent GameEvent[]
+}
+
+model GameEvent {
+  id        Int           @id @default(autoincrement())
+  createdAt DateTime      @default(now())
+  type      GameEventType @relation(fields: [typeId], references: [id])
+  team      Team?         @relation(fields: [teamId], references: [id])
+  player    Player?       @relation(fields: [playerId], references: [id])
+  Game      Game?         @relation(fields: [gameId], references: [id])
+  gameId    Int?
+  typeId    Int
+  teamId    Int?
+  playerId  Int?
+}
+
+model Game {
+  id             Int          @id @default(autoincrement())
+  plannedAt      String
+  location       String
+  category       GameCategory @relation(fields: [gameCategoryId], references: [id])
+  status         GameStatus   @relation(fields: [statusId], references: [id])
+  teams          Team[]
+  events         GameEvent[]
+  statusId       Int
+  gameCategoryId Int
+}
