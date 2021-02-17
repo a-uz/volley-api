@@ -61,21 +61,11 @@ CREATE TABLE "Game" (
     "plannedAt" TEXT NOT NULL,
     "location" TEXT NOT NULL,
     "statusId" INTEGER NOT NULL,
-    "gameCategoryId" INTEGER NOT NULL,
-    FOREIGN KEY ("gameCategoryId") REFERENCES "GameCategory" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY ("statusId") REFERENCES "GameStatus" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    "categoryId" INTEGER NOT NULL,
+    "teamAId" INTEGER NOT NULL,
+    "teamBId" INTEGER NOT NULL,
+    FOREIGN KEY ("categoryId") REFERENCES "GameCategory" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY ("statusId") REFERENCES "GameStatus" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY ("teamAId") REFERENCES "Team" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY ("teamBId") REFERENCES "Team" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
-
--- CreateTable
-CREATE TABLE "_GameToTeam" (
-    "A" INTEGER NOT NULL,
-    "B" INTEGER NOT NULL,
-    FOREIGN KEY ("A") REFERENCES "Game" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY ("B") REFERENCES "Team" ("id") ON DELETE CASCADE ON UPDATE CASCADE
-);
-
--- CreateIndex
-CREATE UNIQUE INDEX "_GameToTeam_AB_unique" ON "_GameToTeam"("A", "B");
-
--- CreateIndex
-CREATE INDEX "_GameToTeam_B_index" ON "_GameToTeam"("B");

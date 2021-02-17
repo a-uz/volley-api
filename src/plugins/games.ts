@@ -40,7 +40,8 @@ export const gamesPlugin = {
               location: Joi.string().required(),
               categoryId: Joi.number().required(),
               statusId: Joi.number().required(),
-              teamIds: Joi.array().items(Joi.number()).required(),
+              teamAId: Joi.number().required(),
+              teamBId: Joi.number().required(),
             }),
           },
         },
@@ -58,7 +59,8 @@ async function getGamesHandler(request: Hapi.Request, h: Hapi.ResponseToolkit) {
       include: {
         category: true,
         status: true,
-        teams: true,
+        teamA: true,
+        teamB: true,
       },
     });
     return h.response(games);
@@ -77,7 +79,8 @@ async function getGameHandler(request: Hapi.Request, h: Hapi.ResponseToolkit) {
       include: {
         category: true,
         status: true,
-        teams: true,
+        teamA: true,
+        teamB: true,
         events: true,
       },
     });
@@ -97,39 +100,18 @@ async function getGameHandler(request: Hapi.Request, h: Hapi.ResponseToolkit) {
   }
 }
 
-interface PostGameInput {
-  plannedAt: string;
-  location: string;
-  categoryId: number;
-  statusId: number;
-  teamIds: number[];
-}
-
 async function postGameHandler(request: Hapi.Request, h: Hapi.ResponseToolkit) {
   const { prisma } = request.server.app;
-  const {
-    plannedAt,
-    location,
-    categoryId,
-    statusId,
-    teamIds,
-  } = request.payload as PostGameInput;
+  const gameData = request.payload as Prisma.GameCreateInput;
 
   try {
     const game = await prisma.game.create({
-      data: {
-        plannedAt: plannedAt,
-        location: location,
-        gameCategoryId: categoryId,
-        statusId: statusId,
-        // teams: {
-        //   connect: teamIds.map((teamId) => ({ id: teamId })),
-        // },
-      },
+      data: gameData,
       include: {
         category: true,
         status: true,
-        teams: true,
+        teamA: true,
+        teamB: true,
       },
     });
     return h.response(game);

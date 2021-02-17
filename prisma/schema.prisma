@@ -30,7 +30,8 @@ model Team {
   id        Int         @id @default(autoincrement())
   name      String
   players   Player[]
-  Game      Game[]
+  teamAGame Game[]      @relation("TeamA")
+  teamBGame Game[]      @relation("TeamB")
   GameEvent GameEvent[]
 }
 
@@ -66,13 +67,16 @@ model GameEvent {
 }
 
 model Game {
-  id             Int          @id @default(autoincrement())
-  plannedAt      String
-  location       String
-  category       GameCategory @relation(fields: [gameCategoryId], references: [id])
-  status         GameStatus   @relation(fields: [statusId], references: [id])
-  teams          Team[]
-  events         GameEvent[]
-  statusId       Int
-  gameCategoryId Int
+  id         Int          @id @default(autoincrement())
+  plannedAt  String
+  location   String
+  category   GameCategory @relation(fields: [categoryId], references: [id])
+  status     GameStatus   @relation(fields: [statusId], references: [id])
+  teamA      Team         @relation("TeamA", fields: [teamAId], references: [id])
+  teamB      Team         @relation("TeamB", fields: [teamBId], references: [id])
+  events     GameEvent[]
+  statusId   Int
+  categoryId Int
+  teamAId    Int
+  teamBId    Int
 }
